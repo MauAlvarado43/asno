@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Gestor de inventario</title>
+	<link href="../css/bootstrap.min.css" rel="stylesheet">
+	<link href="../css/bootstrap.css" rel="stylesheet">
+	<link href="../css/estilos.css" rel="stylesheet" type="text/css">
+	<link href="../favicon.png" rel="icon" type="image/png">
+	<script src="../js/jquery.min.js"></script>
+	<script src="../js/bootstrap.min.js"></script>
+	<script src="../js/scripts.js"></script>
+	<script src="../js/validate.js"></script>
+	<script src=" https://printjs-4de6.kxcdn.com/print.min.js"></script>
+</head>
+
+<body id="body">
+	<header>
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+			<a class="navbar-brand" href="../index.html"><img src="../img/logo.png"></a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample05"
+				aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+
+			<div class="collapse navbar-collapse" id="navbarsExample05">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item active">
+						<a class="nav-link" href="../index.html">Inicio <span class="sr-only">(current)</span></a>
+					</li>
+				</ul>
+
+			</div>
+			<div class="navbar-nav my-2 my-md-0">
+				<a class="btn btn-success mr-3 mb-3 d-inline-block" id="modal-279856" href="#modal-container-279856"
+					role="button" class="btn" data-toggle="modal">Cerrar Sesión</a>
+			</div>
+		</nav>
+	</header>
+
+	<br>
+
+	<div class="container">
+		<a href="ventas.html" class="btn btn-info">Realizar ventas</a>
+	</div>
+	<div class="container">
+
+		<div class="col-md-5 mx-auto">
+			<h1>Gestor de inventario</h1>
+		</div>
+		<div class="row">
+
+
+			<div class="col-md-6 mx-auto">
+				<div class="card">
+					<div class="errorProduct"></div>
+					<h3 id="addProduct" class="mx-auto">Agregar Producto</h3>
+					<div class="card-body">
+						<form>
+							<div>
+
+								<div class="form-group"><input class="form-control" id="nomp" type="text"
+										placeholder="Nombre de Producto" maxlength="30"
+										onkeypress="return validarL(event,this);"></div>
+								<div class="form-group"><input class="form-control" id="preven" type="text"
+										placeholder="Precio de Venta" maxlength="30"></div>
+								<div class="form-group"><input class="form-control" id="precom" type="text"
+										placeholder="Precio de Compra" maxlength="30"></div>
+								<div class="form-group"><input class="form-control" id="canivt" type="text"
+										placeholder="Cantidad en Inventario" maxlength="11"
+										onkeypress="return validarN(event,this);"></div>
+								<div class="form-group">
+									<textarea class="form-control" type="text" placeholder="Descripción" id="des"
+										maxlength="200"></textarea>
+								</div>
+								<div class="form-group">
+									<div id="tpo1"></div>
+								</div>
+								<div class="form-group">
+									<div id="unm1"></div>
+								</div>
+								<div class="form-group">
+									<input id="addP" type="button" value="Añadir"class="btn btn-success form-control">
+								</div>
+								<div class="form-group">
+									<a href="#prod" class="btn btn-primary form-control ">
+									Ver Inventario
+								</a>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6 mx-auto">
+				<div class="card">
+					<div class="mx-auto"></div>
+					<div class="card-body">
+						<form enctype="multipart/form-data">
+							<div class="form-group"><input type="file" name="file" accept=".csv" id="file"></div>
+							<div class="form-group"><input type="button" name="subir" onclick="uploadCSV();"
+									value="Subir CSV" class="form-control btn btn-success"></div>
+						</form>
+						<input type="button" name="subir" onclick="generatePDF();" value="Generar PDF" class="form-control btn btn-success">
+					</div>
+				</div>
+
+			</div>
+
+		</div><br>
+		<div class="row">
+
+			<div class="col-md-6 mx-auto">
+				<div class="card">
+					<h3 class="mx-auto">Tipos de Producto</h3>
+					<div class="card-body">
+						<div class="form-group">
+							<h4>Buscar: </h4><input type="text" placeholder="Buscar..." onkeyup="searchType(this)"
+								class="form-control"><br>
+						</div>
+						<div class="table-responsive" id="type_products"></div>
+						<div class="form-group"></div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6 mx-auto">
+				<div class="card">
+					<div class="errorTypeProduct"></div>
+					<div class="mx-auto">
+						<h3>Añadir tipo de producto</h3>
+					</div>
+					<div class="card-body">
+						<div class="form-group">
+							<form>
+								<input id="nomt" type="text" placeholder="Nombre de Tipo" maxlength="30"
+									class="form-control" onkeypress="return validarL(event,this);">
+
+						</div>
+						<div class="form-group"><input id="addT" type="button" value="Añadir" class="btn btn-success">
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<br>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="card">
+					<div class="divUnity"></div>
+					<div class="mx-auto">
+						<h3>Unidades de Medida</h3>
+					</div>
+					<div class="card-body">
+						<div class="form-group">
+							<h4>Buscar: </h4><input type="text" placeholder="Buscar..." onkeyup="searchUnity(this)"
+								class="form-control">
+						</div>
+						<div class="form-group">
+							<div id="metric_units" class="table-responsive"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="card">
+					<div class="errorUM"></div>
+					<div class="mx-auto">
+						<h3>Añadir unidad de medida</h3>
+					</div>
+					<div class="card-body">
+						<div class="form-group">
+							<form>
+								<input id="nomu" type="text" placeholder="Nombre de Medida" maxlength="30"
+									onkeypress="return validarL(event,this);" class="form-control">
+						</div>
+						<div class="form-group">
+							<input id="addU" type="button" value="Añadir" class="btn btn-success">
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div>
+
+		</div>
+	</div>
+
+	<br><br>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12 mx-auto" id="prod">
+				<h3>Productos</h3><br>
+				<h4>Buscar: </h4><input type="text" placeholder="Buscar..." onkeyup="searchProduct(this)"
+					class="form-control"><br>
+			</div>
+
+			<div id="inventory" class="table-responsive my-auto"></div>
+
+		</div>
+	</div>
+	<br><br><br>
+
+	<footer class="navbar-dark bg-dark pt-4 pl-4 pr-4">
+		<div class="row">
+			<div class="col-xs-12 col-md-3">
+				<address>
+					 <strong class="white">HyperSoftCode.</strong><br> 
+					 Dirección imaginaria #666<br> Ciudad de México. 69666<br> 
+					 Tel: <a href="">(+52) 00-0000-0000</a>
+				</address>
+			</div>
+	
+			<div class="col-xs-12 col-md-3">
+				<ul class="navbar-nav flex-column">
+				  <li class="nav-item">
+					<a class="nav-link" href="#">Condiciones de uso</a>
+				  </li>
+				</ul>
+			</div>
+	
+			<div class="col-xs-12 col-md-3">
+				<ul class="navbar-nav flex-column">
+				  <li class="nav-item">
+					<a class="nav-link" href="#">Polìtica privacidad</a>
+				  </li>
+				</ul>
+			</div>
+	
+			<div class="col-xs-12 col-md-3">
+				<blockquote class="blockquote text-right">
+					<p class="mb-0 white">
+						No es sobre las ideas. Sino hacer que éstas se vuelvan realidad.
+					</p>
+					<footer class="blockquote-footer">
+						Scott Belsky
+					</footer>
+				</blockquote>
+			</div>
+	
+		</div>
+		<div class="row white pd-4">
+			<div class="col text-center mb-3">
+				<small class="">Todos los derechos reservados HyperSoftCode &copy; 2019</small>
+			</div>
+		</div>
+	</footer>
+
+	<script>
+
+		function uploadCSV() {
+			var file = $('#file').prop('files')[0];
+			var data = new FormData();
+			data.append('file', file);
+			$.ajax({
+				url: '/uploadCSV',
+				contentType: false,
+				processData: false,
+				data: data,
+				type: 'POST',
+				success: function (response) {
+					$.ajax({
+						url: "/getInventory",
+						type: "POST",
+						data: { "deal": sessionStorage.getItem("deal") },
+						success: function (response1) {
+							$("#inventory").text("");
+							$("#inventory").html(response1);
+						}
+					});
+					if (response == "") { }
+					else {
+						alert(response);
+					}
+				}
+			});
+		}
+		function generatePDF(){
+			$("#body").css("cursor","wait");
+			var xhr = new XMLHttpRequest();
+			xhr.open('POST', '/generatePDF', true);
+			xhr.responseType = 'blob';
+			xhr.onload = function(e) {
+				if (this.status == 200) {
+					var blob = new Blob([this.response], {type: 'application/txt'});
+					printJS(window.URL.createObjectURL(blob));
+					$("#body").css("cursor","auto");
+					/*var link = document.createElement('a');
+					link.href = window.URL.createObjectURL(blob);
+					link.download = "reporte.pdf";
+					link.click();    */   
+				}
+			};
+			xhr.send();
+		}
+
+		$("#addU").on('click', function () {
+			if (validateLetters($("#nomu").val(), "La unidad de medida", ".errorUM")) {
+				addUnit();
+			}
+		})
+
+		$("#addT").on('click', function () {
+			if (validateLetters($("#nomt").val(), "El tipo de producto", ".errorTypeProduct")) {
+				addType();
+			}
+		})
+
+		$("#addP").on('click', function () {
+			if (validateLettersWithSpace($("#nomp").val(), "El nombre del producto", ".errorProduct")
+				&& validateNumbers($("#preven").val(), "El precio de Venta ", ".errorProduct")
+				&& validateNumbers($("#precom").val(), "El precio de Compra ", ".errorProduct")
+				&& onlyNumbers($("#canivt").val(), "La cantidad", ".errorProduct")
+				&& validateDescription($("#des").val(), ".errorProduct")) {
+				addProduct();
+			}
+		})
+
+		$.ajax({
+			url: "/getUser",
+			type: "POST",
+			success: function (response) {
+				if (response.level != "2") {
+					window.location.href = "../index.html";
+				}
+				if (!response.valid == true) {
+					window.location.href = "../index.html";
+				}
+			}
+		});
+
+		/*$.ajax({
+			url:"/isDeal",
+			type:"POST",
+			data:{},
+			success:function(response){
+				if(response==false){
+					window.location.href="negocio.html";
+				}
+			}
+		});*/
+
+		$.ajax({
+			url: "/getInventory",
+			type: "POST",
+			data: { "deal": sessionStorage.getItem("deal") },
+			success: function (response) {
+				$("#inventory").html(response);
+			}
+		});
+
+		$.ajax({
+			url: "/getTypeProducts",
+			type: "POST",
+			data: { "deal": sessionStorage.getItem("deal") },
+			success: function (response) {
+				$("#type_products").html(response);
+			}
+		});
+
+		$.ajax({
+			url: "/putSelectOptionsTyP",
+			type: "POST",
+			data: { "deal": sessionStorage.getItem("deal") },
+			success: function (response) {
+				$("#tpo1").html(response);
+			}
+		});
+
+		$.ajax({
+			url: "/putSelectOptionsUnM",
+			type: "POST",
+			data: { "deal": sessionStorage.getItem("deal") },
+			success: function (response) {
+				$("#unm1").html(response);
+			}
+		});
+
+		$.ajax({
+			url: "/getMetricUnits",
+			type: "POST",
+			data: { "deal": sessionStorage.getItem("deal") },
+			success: function (response) {
+				$("#metric_units").html(response);
+			}
+		});
+
+		$("#modal-279856").click(function () {
+			$.ajax({
+				url: '/logOut',
+				method: 'POST',
+				success: function (response) {
+					alert(response);
+					window.location.href = "../index.html";
+				}
+			});
+		});
+
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Bienvenido a ASNO</title>
+
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap.css" rel="stylesheet">
+    <link href="../css/estilos.css" rel="stylesheet" type="text/css">
+    <link href="../favicon.png" rel="icon" type="image/png">
+
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/encrypt/bin/jsencrypt.js"></script>
+    <script src="../js/scripts.js"></script>
+    <script src="../js/validate.js"></script>
+    <noscript>
+        <meta http-equiv="refresh" content="0;URL=../error.html" />
+    </noscript>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="inicio.html"><img src="../img/logo.png"></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample05"
+                aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarsExample05">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="inicio.html">Inicio <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Enlance 1</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Enlace 2</a>
+                    </li>
+                </ul>
+
+            </div>
+            <div class="navbar-nav my-2 my-md-0">
+                <a class="btn btn-success mr-3 mb-3 d-inline-block" id="modal-123" href="#modal-container-279856"
+                    role="button" class="btn" data-toggle="modal">Cerrar Sesión</a>
+                <a class="btn btn-primary mb-3 d-inline-block" id="modal-857424" href="#modal-container-857424"
+                    role="button" class="btn" data-toggle="modal">Botón 2</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <br>
+                <h1>Gestor de negocios</h1>
+            </div>
+            <div class="col-md-12 text-center">
+                <a class="btn btn-success mr-3 mb-3 d-inline-block" id="modal-279856" href="#modal-container-279856"
+                    role="button" data-toggle="modal">
+                    Dar click aqui para crear un nuevo negocio
+                </a>
+                <br><br>
+            </div>
+
+            <div id="negocios" class="row">
+            </div>
+
+
+        </div>
+    </div>
+
+    <!-- Crear negocio -->
+    <div class="modal fade" id="modal-container-279856" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">
+                        Crear un negocio
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true" class="white">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="errorCreate"></div>
+                    <b>¡Anímate a empezar tu negocio! Es muy sencillo</b><br>
+                    <form action="" id="registro" name="login">
+                        <p>Introduzca el nombre de su negocio:</p>
+                        <input type="text" name="nom_negocio" id="nom_negocio_init" onclick="return nomNeg(event)"
+                            maxlength="40" autofocus><br>
+                        <p>Introduzca su contraseña de usuario para confirmar:</p>
+                        <input type="password" name="pass_dueño" id="pass_init">
+                        <br>
+                        <div class="mensaje" id="mensaje_crear"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="buttonCreateDeal" class="btn btn-success">
+                        Crear negocio
+                    </button>
+                    <script>
+                        $("#buttonCreateDeal").on('click', function () {
+                            if (onlyLettersAndSpace($('#nom_negocio_init').val(), "El nombre del negocio", ".errorCreate")
+                                && validatePassLogin($('#pass_init').val(), ".errorCreate")) {
+
+                                crearNegocio($('#nom_negocio_init').val(), $('#pass_init').val());
+                                $('#nom_negocio_init').val("")
+                                $('#pass_init').val("")
+
+                                $("#modal-container-279856").modal("hide");
+
+                            }
+                        })
+                    </script>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Editar negocio -->
+    <div class="modal fade" id="modal-container-857424" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">
+                        Editar
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true" class="white">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="errorUpdate"></div>
+                    <b>Edite los cambios hechos a su negocio #</b>
+                    <div id="numero_edit"></div>
+                    <br>
+                    <form action="" id="edit" name="editar">
+                        <p>Cambia el nombre de tu negocio:</p>
+                        <input type="text" name="nuevo_nombre" id="nom_negocio_new" maxlength="40"><br>
+                        <p>Introduce tu contraseña para confirmar datos:</p>
+                        <input type="password" name="pass_dueño" id="pass_edit"><br>
+                        <div class="mensaje" id="mensaje_edit"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="buttonEditDeal" class="btn btn-success">
+                        Cambiar datos de negocio
+                    </button>
+                    <script>
+                        $("#buttonEditDeal").on('click', function () {
+                            if (onlyLettersAndSpace($('#nom_negocio_new').val(), "El nombre del negocio", ".errorUpdate")
+                                && validatePassLogin($('#pass_edit').val(), ".errorUpdate")) {
+                                editNegocio($('#pass_edit').val(), $('#nom_negocio_new').val());
+                            }
+                        })
+                    </script>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Eliminar negocio -->
+    <div class="modal fade" id="modal-container-857465" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">
+                        Eliminar
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true" class="white">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="errorDeleteDeal"></div>
+                    <b id="deal_delete">Elimine su negocio </b>
+                    <div id="numero_delete"></div>
+                    <br>
+                    <form action="" id="delete" name="eliminar">
+                        <p>Para confirmar su petición, ingrese su contraseña de dueño:</p>
+                        <input type="password" name="pass_dueño" id="pass_elim"><br>
+                        <div class="mensaje" id="mensaje_elim"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="buttonDeleteDeal" class="btn btn-success">
+                        Eliminar negocio
+                    </button>
+                    <script>
+                        $("#buttonDeleteDeal").on('click', function () {
+                            if (validatePassLogin($('#pass_elim').val(), ".errorDeleteDeal")) {
+                                deleteNegocio($('#pass_elim').val());
+                                $("#modal-container-857465").modal("hide");
+                            }
+                        })
+                    </script>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br><br><br>
+
+    <footer class="navbar-dark bg-dark pt-4 pl-4 pr-4">
+        <div class="row">
+            <div class="col-xs-12 col-md-3">
+                <address>
+                     <strong class="white">HyperSoftCode.</strong><br> 
+                     Dirección imaginaria #666<br> Ciudad de México. 69666<br> 
+                     Tel: <a href="">(+52) 00-0000-0000</a>
+                </address>
+            </div>
+    
+            <div class="col-xs-12 col-md-3">
+                <ul class="navbar-nav flex-column">
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Condiciones de uso</a>
+                  </li>
+                </ul>
+            </div>
+    
+            <div class="col-xs-12 col-md-3">
+                <ul class="navbar-nav flex-column">
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Polìtica privacidad</a>
+                  </li>
+                </ul>
+            </div>
+    
+            <div class="col-xs-12 col-md-3">
+                <blockquote class="blockquote text-right">
+                    <p class="mb-0 white">
+                        No es sobre las ideas. Sino hacer que éstas se vuelvan realidad.
+                    </p>
+                    <footer class="blockquote-footer">
+                        Scott Belsky
+                    </footer>
+                </blockquote>
+            </div>
+    
+        </div>
+        <div class="row white pd-4">
+            <div class="col text-center mb-3">
+                <small class="">Todos los derechos reservados HyperSoftCode &copy; 2019</small>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        $.ajax({
+            url: "/getUser",
+            type: "POST",
+            success: function (response) {
+                if (response.level != "2") {
+                    window.location.href = "../index.html";
+                }
+                if (!response.valid == true) {
+                    window.location.href = "../index.html";
+                }
+            }
+        });
+
+        $.ajax({
+            url: "/getAllDeals",
+            type: "POST",
+            success: function (response) {
+                if (response == "0") {
+                    // $("#negocios").html("<label class='text-center'>Registra un negocio antes</label>");
+                } else {
+                    $("#negocios").html(response);
+                }
+            }
+        });
+
+        $("#modal-123").click(function () {
+            $.ajax({
+                url: '/logOut',
+                method: 'POST',
+                success: function (response) {
+                    alert(response);
+                    window.location.href = "../index.html";
+                }
+            });
+        });
+
+    </script>
+</body>
+
+</html>

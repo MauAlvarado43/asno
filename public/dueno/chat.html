@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<link href="../css/bootstrap.min.css" rel="stylesheet">
+	<link href="../css/bootstrap.css" rel="stylesheet">
+	<link href="../css/estilos.css" rel="stylesheet" type="text/css">
+	<link href="../favicon.png" rel="icon" type="image/png">
+	<link rel="stylesheet" type="text/css" href="../css/chat.css">
+</head>
+
+<body>
+	<header>
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+			<a class="navbar-brand" href="../index.html"><img src="../img/logo.png"></a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample05"
+				aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+
+			<div class="collapse navbar-collapse" id="navbarsExample05">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item active">
+						<a class="nav-link" href="../index.html">Inicio <span class="sr-only">(current)</span></a>
+					</li>
+				</ul>
+
+			</div>
+			<div class="navbar-nav my-2 my-md-0">
+				<a class="btn btn-success mr-3 mb-3 d-inline-block" id="modal-279856" href="#modal-container-279856"
+					role="button" class="btn" data-toggle="modal">Cerrar Sesión</a>
+			</div>
+		</nav>
+	</header>
+
+	<div class="container-fluid">
+		<br>
+
+		<div class="container">
+			<h3 class=" text-center">Chat del Dueño</h3>
+			<div class="messaging">
+				<div class="inbox_msg">
+					<div class="inbox_people">
+						<div class="headind_srch">
+							<div class="recent_heading">
+								<h4>Personas en línea</h4>
+							</div>
+							<div class="srch_bar">
+								<div class="stylish-input-group">
+
+
+									</span> </div>
+							</div>
+						</div>
+						<div class="inbox_chat">
+							<div class="chat_list active_chat" id="online">
+							</div>
+						</div>
+					</div>
+					<!--		Aquí inician los mensajes		-->
+					<div class="mesgs">
+						<div class="msg_history" id="msg_history">
+							<div class="received_msg" id="received_msg">
+							</div>
+
+						</div>
+						<div class="type_msg">
+							<div class="input_msg_write">
+								<input type="text" class="write_msg" placeholder="Escribe tu mensaje amiko" id="msg"
+									onkeyup="if(event.keyCode==13){sendMSG();}" />
+								<button class="msg_send_btn" type="button" onclick="sendMSG();"><i
+										class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+
+							</div>
+						</div>
+					</div>
+
+
+				</div>
+			</div>
+
+
+		</div>
+		</div>
+		<footer class="navbar-dark bg-dark pt-4 pl-4 pr-4">
+			<div class="row">
+				<div class="col-xs-12 col-md-3">
+					<address>
+						<strong class="white">HyperSoftCode.</strong><br> 
+						Dirección imaginaria #666<br> Ciudad de México. 69666<br> 
+						Tel: <a href="">(+52) 00-0000-0000</a>
+					</address>
+				</div>
+	
+				<div class="col-xs-12 col-md-3">
+					<ul class="navbar-nav flex-column">
+					<li class="nav-item">
+						<a class="nav-link" href="#">Condiciones de uso</a>
+					</li>
+					</ul>
+				</div>
+	
+				<div class="col-xs-12 col-md-3">
+					<ul class="navbar-nav flex-column">
+					<li class="nav-item">
+						<a class="nav-link" href="#">Polìtica privacidad</a>
+					</li>
+					</ul>
+				</div>
+	
+				<div class="col-xs-12 col-md-3">
+					<blockquote class="blockquote text-right">
+						<p class="mb-0 white">
+							No es sobre las ideas. Sino hacer que éstas se vuelvan realidad.
+						</p>
+						<footer class="blockquote-footer">
+							Scott Belsky
+						</footer>
+					</blockquote>
+				</div>
+	
+			</div>
+			<div class="row white pd-4">
+				<div class="col text-center mb-3">
+					<small class="">Todos los derechos reservados HyperSoftCode &copy; 2019</small>
+				</div>
+			</div>
+		</footer>
+		<script src="../js/jquery.min.js"></script>
+		<script src="../js/bootstrap.min.js"></script>
+		<script src="../js/encrypt/bin/jsencrypt.js"></script>
+		<script src="../js/scripts.js"></script>
+		<script src="../js/socket.io.js"></script>
+		<script>
+			$("#audio").hide();
+			$("#player").hide();
+
+			$("#modal-279856").click(function () {
+				$.ajax({
+					url: '/logOut',
+					method: 'POST',
+					success: function (response) {
+						alert(response);
+						window.location.href = "../index.html";
+					}
+				});
+			});
+
+			var destiny = "";
+
+			$.ajax({
+				url: "/getUser",
+				type: "POST",
+				success: function (response) {
+					if (response.level != "2") {
+						window.location.href = "../index.html";
+					}
+					if (!response.valid == true) {
+						window.location.href = "../index.html";
+					}
+				}
+			});
+
+			var socket = io.connect('asno.ga', { transports: ['polling'] });
+
+			$.ajax({
+				url: "/getuser",
+				type: "POST",
+				success: function (response) {
+					socket.emit("loadSession", response);
+					socket.emit('createRoom');
+				}
+			});
+
+			var id = "";
+
+			var i = 0;
+
+			var online = [];
+
+			socket.on('chatOnline', function (slave) {
+
+				var j = 0;
+				var aux = 0;
+				var bool = false;
+
+				online.forEach((element) => {
+					if (element == slave) {
+						aux = j;
+						bool = true;
+					}
+					j++;
+				});
+				if (bool) {
+					online.splice(aux, 1);
+				}
+
+				online.push(slave);
+
+				var html = "";
+
+				var auxO = 0;
+				var tempO = "";
+
+				online.forEach(element => {
+
+					if (tempO != element) {
+						auxO = 0;
+					}
+					if (element != sessionStorage.getItem("name") && aux == 0) {
+						html += "<div class='chat_list' onclick=\"getMSG('" + element + "')\" style='cursor:pointer'>"
+							+ "<div class='chat_people'>"
+							+ "<div class='chat_img'> <img src='../img/chat/perfil.png' alt='sunil'> </div>"
+							+ "<div class='chat_ib'>"
+							+ "<h5>" + element + "</h5>"
+							+ "</div>"
+							+ "</div>"
+							+ "</div>";
+					}
+				});
+
+				$("#online").text("");
+				$("#online").html(html);
+
+				if (destiny == "") {
+					destiny = slave;
+					socket.emit("getMessagesD", destiny);
+				}
+
+			});
+
+			socket.on('getMessagesUD', (msg2) => {
+				var msg = JSON.parse(decodeURIComponent(msg2));
+				$("#received_msg").text("");
+				msg.forEach(element => {
+					var msg1 = "<div class='incoming_msg'><span class='time_date'>" + element.sender + "</span>"
+						+ "<div class='incoming_msg_img'><img src='../img/chat/perfil.png' alt='sunil'></div>"
+						+ "<div class='received_msg'>"
+						+ "<div class='received_withd_msg'>"
+						+ "<p>" + element.message + "</p>"
+						+ "<span class='time_date'>" + element.date + "</span></div>"
+						+ "</div>"
+						+ "</div>";
+
+					$("#received_msg").append(msg1);
+
+					var bottom = $("#msg_history").prop('scrollHeight');
+
+					$("#msg_history").scrollTop(bottom);
+				});
+			});
+
+			socket.on('chatOffline', function (user) {
+
+				var j = 0;
+
+				online.forEach((element) => {
+					if (element == user) {
+						aux = j;
+					}
+					j++;
+				});
+
+				online.splice(aux, 1);
+
+				var html = "";
+
+				var auxO = 0;
+				var tempO = "";
+
+				online.forEach(element => {
+
+					if (temp != element) {
+						auxO = 0;
+					}
+
+					if (element != sessionStorage.getItem("name") && aux == 0) {
+
+						tempO = element;
+						auxO++;
+						html += "<div class='chat_list' style='cursor:pointer' onclick=\"getMSG('" + element + "')\">"
+							+ "<div class='chat_people'>"
+							+ "<div class='chat_img'> <img src='../img/chat/perfil.png' alt='sunil'> </div>"
+							+ "<div class='chat_ib'>"
+							+ "<h5>" + element + "</h5>"
+							+ "</div>"
+							+ "</div>"
+							+ "</div>";
+					}
+				});
+
+				$("#online").text("");
+				$("#online").html(html);
+			});
+
+			socket.on('chatUD', function (user, msg) {
+				$("#player").click();
+				if (decodeURIComponent(user) == destiny) {
+					var msg1 = "<div class='incoming_msg'><span class='time_date'>" + decodeURIComponent(user) + "</span>"
+						+ "<div class='incoming_msg_img'><img src='../img/chat/perfil.png' alt='sunil'></div>"
+						+ "<div class='received_msg'>"
+						+ "<div class='received_withd_msg'>"
+						+ "<p>" + decodeURIComponent(msg) + "</p>"
+						+ "<span class='time_date'>" + getDate() + "</span></div>"
+						+ "</div>"
+						+ "</div>";
+
+					$("#received_msg").append(msg1);
+
+					var bottom = $("#msg_history").prop('scrollHeight');
+
+					$("#msg_history").scrollTop(bottom);
+				}
+
+			});
+
+			setInterval(function () { i++; }, 500);
+
+			function sendMSG() {
+				if (destiny == "") {
+					alert("Seleccione primero un usuario destinatario");
+					return false;
+				}
+				if ($('#msg').val() == "") { return false; }
+				if (i < 2) { return false; }
+				i = 0;
+				socket.emit('chatD', encodeURIComponent($('#msg').val()), destiny);
+
+				var msg = "<div class='incoming_msg'><span class='time_date'>" + sessionStorage.getItem("name") + "</span>"
+					+ "<div class='incoming_msg_img'><img src='../img/chat/perfil.png' alt='sunil'></div>"
+					+ "<div class='received_msg'>"
+					+ "<div class='received_withd_msg'>"
+					+ "<p>" + decodeURIComponent($('#msg').val()) + "</p>"
+					+ "<span class='time_date'>" + getDate() + "</span></div>"
+					+ "</div>"
+					+ "</div>";
+
+				$("#received_msg").append(msg);
+
+				$("#msg").val("");
+
+				var bottom = $("#msg_history").prop('scrollHeight');
+
+				$("#msg_history").scrollTop(bottom);
+			}
+
+			function getMSG(name) {
+				destiny = name;
+				socket.emit("getMessagesD", destiny);
+			}
+
+			function play() {
+				var notification = document.getElementById("audio");
+				notification.play();
+			}
+
+		</script>
+</body>
+
+</html>

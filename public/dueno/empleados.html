@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Gestor de empleados</title>
+	<link href="../css/bootstrap.min.css" rel="stylesheet">
+	<link href="../css/bootstrap.css" rel="stylesheet">
+	<link href="../css/estilos.css" rel="stylesheet" type="text/css">
+	<link href="../favicon.png" rel="icon" type="image/png">
+</head>
+
+<body>
+	<header>
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+			<a class="navbar-brand" href="../index.html"><img src="../img/logo.png"></a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample05"
+				aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+
+			<div class="collapse navbar-collapse" id="navbarsExample05">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item active">
+						<a class="nav-link" href="../index.html">Inicio <span class="sr-only">(current)</span></a>
+					</li>
+				</ul>
+
+			</div>
+			<div class="navbar-nav my-2 my-md-0">
+				<a class="btn btn-success mr-3 mb-3 d-inline-block" id="modal-279856" href="#modal-container-279856"
+					role="button" class="btn" data-toggle="modal">Cerrar Sesión</a>
+		</nav>
+	</header>
+	<div class="container-fluid">
+		<h1>Gestor de empleados</h1>
+		<div class="container p-4">
+			<div class="row">
+				<div class="col-md-6 mx-auto">
+					<div id="table-slaves"></div>
+				</div>
+				<div class="col-md-6 mx-auto">
+					<div class="card">
+						<div class="card-body">
+
+							<div class="form-group"><br>
+								<input type="text" maxlength="10" minlength="10" id="code" class="form-control"
+									autofocus placeholder="Código de empleado">
+								<br>
+							</div>
+							<div class="form-group">
+								<br>
+								<input type="button" onclick="addSlave();" value="Registrar" class="btn btn-success">
+								<br>
+							</div>
+						</div>
+					</div> <br>
+					<div id="Ana_emp"><a class="btn btn-primary" href="analisisemp.html">Análisis de empleados</a></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<footer class="navbar-dark bg-dark pt-4 pl-4 pr-4">
+		<div class="row">
+			<div class="col-xs-12 col-md-3">
+				<address>
+					 <strong class="white">HyperSoftCode.</strong><br> 
+					 Dirección imaginaria #666<br> Ciudad de México. 69666<br> 
+					 Tel: <a href="">(+52) 00-0000-0000</a>
+				</address>
+			</div>
+	
+			<div class="col-xs-12 col-md-3">
+				<ul class="navbar-nav flex-column">
+				  <li class="nav-item">
+					<a class="nav-link" href="#">Condiciones de uso</a>
+				  </li>
+				</ul>
+			</div>
+	
+			<div class="col-xs-12 col-md-3">
+				<ul class="navbar-nav flex-column">
+				  <li class="nav-item">
+					<a class="nav-link" href="#">Polìtica privacidad</a>
+				  </li>
+				</ul>
+			</div>
+	
+			<div class="col-xs-12 col-md-3">
+				<blockquote class="blockquote text-right">
+					<p class="mb-0 white">
+						No es sobre las ideas. Sino hacer que éstas se vuelvan realidad.
+					</p>
+					<footer class="blockquote-footer">
+						Scott Belsky
+					</footer>
+				</blockquote>
+			</div>
+	
+		</div>
+		<div class="row white pd-4">
+			<div class="col text-center mb-3">
+				<small class="">Todos los derechos reservados HyperSoftCode &copy; 2019</small>
+			</div>
+		</div>
+	</footer>
+
+
+	<script src="../js/jquery.min.js"></script>
+	<script src="../js/bootstrap.min.js"></script>
+	<script src="../js/encrypt/bin/jsencrypt.js"></script>
+	<script src="../js/scripts.js"></script>
+	<script>
+
+		$("#modal-279856").click(function () {
+			$.ajax({
+				url: '/logOut',
+				method: 'POST',
+				success: function (response) {
+					alert(response);
+					window.location.href = "../index.html";
+				}
+			});
+		});
+
+		function addSlave() {
+			$.ajax({
+				url: "/registerSlave",
+				type: "POST",
+				data: { "code": $("#code").val() },
+				success: function (response) {
+					alert(response);
+					$.ajax({
+						url: "/getSlaves",
+						type: "POST",
+						data: { "deal": sessionStorage.getItem("deal") },
+						success: function (response1) {
+							$("#table-slaves").text("");
+							$("#table-slaves").html(response1);
+						}
+					});
+				}
+			});
+		}
+
+		function deleteSlave(id, name) {
+			$.ajax({
+				url: "/unregisterSlave",
+				type: "POST",
+				data: { "id": id, "name": encrypt(name) },
+				success: function (response) {
+					alert(response);
+					$.ajax({
+						url: "/getSlaves",
+						type: "POST",
+						data: { "deal": sessionStorage.getItem("deal") },
+						success: function (response1) {
+							$("#table-slaves").text("");
+							$("#table-slaves").html(response1);
+						}
+					});
+				}
+			});
+		}
+
+		$.ajax({
+			url: "/getUser",
+			type: "POST",
+			success: function (response) {
+				if (response.level != "2") {
+					window.location.href = "../index.html";
+				}
+				if (!response.valid == true) {
+					window.location.href = "../index.html";
+				}
+				$.ajax({
+					url: "/getSlaves",
+					type: "POST",
+					data: { "deal": sessionStorage.getItem("deal") },
+					success: function (response1) {
+						$("#table-slaves").text("");
+						$("#table-slaves").html(response1);
+					}
+				});
+			}
+		});
+	</script>
+</body>
+
+</html>

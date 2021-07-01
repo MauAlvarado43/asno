@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Registro</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="favicon.png" rel="icon" type="image/png">
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/scripts.js"></script>
+
+    <noscript>
+        <META http-equiv="refresh" content="1;URL=error.html">
+    </noscript>
+
+    <script>
+        $.ajax({
+            url:"/getUser",
+            type:"POST",
+            success:function(response){     
+                if(response.level!="4"){
+                    window.location.href = "index.html";
+                }
+                if(!response.valid==true){
+                    window.location.href = "index.html";
+                }
+            }
+        });
+    </script>
+
+</head>
+
+<style>
+    .input {
+        font-size:22px;
+        display:block;
+        width:100%;
+        height:100%;
+        padding:5px 10px;
+        background:none;
+        background-image:none;
+    }
+</style>
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="index.html"><img src="img/logo.png"></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample05"
+                aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarsExample05">
+                <ul class="navbar-nav mr-auto">
+
+                </ul>
+
+            </div>
+            <div class="navbar-nav my-2 my-md-0">
+                <a class="btn btn-success mr-3 mb-3 d-inline-block" href="index.html" role="button">Iniciar sesión</a>
+                <a class="btn btn-primary mb-3 d-inline-block" id="modal-857424" href="index.html"
+                    role="button">Registrarse</a>
+            </div>
+        </nav>
+    </header>
+
+    <br><br><br><br>
+
+    <div class="row mx-auto">
+        <div class="col-md-6 mx-auto">
+
+            <form id="fin-Reg">
+                Código de verificación: <br><br>
+                <input class="input" type="text" id="code" name="code">
+                <br>
+                ¿Eres?
+                <br><br>
+                <input type="radio" id="rol" value="owner" name="rol">Dueño &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="radio" id="rol" value="employee" name="rol">Empleado
+                <br><br>
+                <input class="btn btn-primary"  style="width: 12rem;" type="button" onclick="finalizeRegister();" value="Completar registro">
+            </form>
+
+        </div>
+    </div>
+
+    <br><br><br><br>
+
+    <footer class="navbar-dark bg-dark pt-4 pl-4 pr-4" style="color: #fff !important;">
+        <div class="row">
+            <div class="col-xs-12 col-md-3">
+                <address>
+                    <strong class="white">HyperSoftCode.</strong><br>
+                    Dirección imaginaria #666<br> Ciudad de México. 69666<br>
+                    Tel: <a href="">(+52) 00-0000-0000</a>
+                </address>
+            </div>
+
+            <div class="col-xs-12 col-md-3">
+                <ul class="navbar-nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Condiciones de uso</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-xs-12 col-md-3">
+                <ul class="navbar-nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Polìtica privacidad</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-xs-12 col-md-3">
+                <blockquote class="blockquote text-right">
+                    <p class="mb-0 white">
+                        No es sobre las ideas. Sino hacer que éstas se vuelvan realidad.
+                    </p>
+                    <footer class="blockquote-footer">
+                        Scott Belsky
+                    </footer>
+                </blockquote>
+            </div>
+
+        </div>
+        <div class="row white pd-4">
+            <div class="col text-center mb-3">
+                <small class="">Todos los derechos reservados HyperSoftCode &copy; 2019</small>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>

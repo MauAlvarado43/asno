@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Gestor de usuarios ASNO</title>
+	<link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap.css" rel="stylesheet">
+    <link href="../css/estilos.css" rel="stylesheet" type="text/css">
+    <link href="../favicon.png" rel="icon" type="image/png">
+  </head>
+  <body>
+	<header>
+	  	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		  <a class="navbar-brand" href="../index.html"><img src="../img/logo.png"></a>
+		  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample05" aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
+		    <span class="navbar-toggler-icon"></span>
+		  </button>
+
+		  <div class="collapse navbar-collapse" id="navbarsExample05">
+		    <ul class="navbar-nav mr-auto">
+		      <li class="nav-item active">
+		        <a class="nav-link" href="../index.html">Inicio <span class="sr-only">(current)</span></a>
+		      </li>
+		      <li class="nav-item">
+		        <a class="nav-link" href="#">Enlance 1</a>
+		      </li>
+		      <li class="nav-item">
+		        <a class="nav-link" href="#">Enlace 2</a>
+		      </li>
+		      
+		    </ul>
+		    
+		  </div>
+		  <div class="navbar-nav my-2 my-md-0">
+			<a class="btn btn-success mr-3 mb-3 d-inline-block" id="modal-279856" href="#modal-container-279856"
+			role="button" class="btn" data-toggle="modal">Cerrar Sesión</a>
+		<a class="btn btn-primary mb-3 d-inline-block" id="modal-857424" href="#modal-container-857424"
+			role="button" class="btn" data-toggle="modal">Botón 2</a>
+				  </div>
+		</nav>
+	</header> 
+    <div class="container-fluid" id="graph1"></div>
+    <div class="container-fluid" id="graph2"></div>
+</div>
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+	<script src="../js/scripts.js"></script>
+    <script src="../js/raphael-min.js"></script>
+    <script src="../js/morris.min.js"></script>
+    <script>
+		$.ajax({
+			url:"/getUser",
+			type:"POST",
+			success:function(response){     
+				if(response.level!="1"){
+					window.location.href = "../index.html";
+				}
+				if(!response.valid==true){
+					window.location.href = "../index.html";
+				}
+			}
+        });
+        $.ajax({
+			url:"/getUserByDate",
+			type:"POST",
+			success:function(response){  
+                new Morris.Line({
+                element: 'graph1',
+                data: response,
+                parseTime: false,
+                xkey: 'Fecha',
+                ykeys: ['Número'],
+                labels: ['Cantidad de usuarios'],
+                xLabelAngle: 60
+                });   
+			}
+        });
+        
+        $.ajax({
+			url:"/getTotalSells",
+			type:"POST",
+			success:function(response){  
+                new Morris.Line({
+                element: 'graph2',
+                data: response,
+                parseTime: false,
+                xkey: 'date',
+                ykeys: ['venta'],
+                labels: ['Cantidad de ventas'],
+                xLabelAngle: 60
+                });   
+			}
+		});
+	</script>
+  </body>
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Ventas</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap.css" rel="stylesheet">
+    <link href="../css/estilos.css" rel="stylesheet" type="text/css">
+    <link href="../favicon.png" rel="icon" type="image/png">
+</head>
+
+<body>
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/scripts.js"></script>
+
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="inicio.html"><img src="../img/logo.png"></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample05"
+                aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarsExample05">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="inicio.html">Inicio <span class="sr-only">(current)</span></a>
+                    </li>
+                </ul>
+            </div>
+            <div class="navbar-nav my-2 my-md-0">
+                <a class="btn btn-success mr-3 mb-3 d-inline-block" id="modal-123" href="#modal-container-279856"
+                    role="button" class="btn" data-toggle="modal">Cerrar Sesión</a>
+            </div>
+        </nav>
+    </header>
+
+    <br><br>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Precio unitario</th>
+                            <th>Cantidad</th>
+                            <th>Cantidad Disponible</th>
+                            <th>Precio total</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sell"></tbody>
+                    <tfoot>
+                        <tr>
+                            <th>Total de la venta:</th>
+                            <th>
+                                <div id="total"></div><input type="button" onclick="registerSell();"
+                                    value="Realizar venta" class="btn btn-success">
+                            </th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="row">
+            <div class="col-md-12 mx-auto">
+                <h3>Filtros:</h3>
+                <div class="col-md-6">
+                    <select class="form-control" id="type" onclick="filter();">
+                        <option>Cualquier categoría</option>
+                    </select>
+                    <select class="form-control" id="unity" onclick="filter();">
+                        <option>Cualquier unidad</option>
+                    </select>
+                </div>
+
+            </div>
+        </div>
+
+        <br><br>
+
+        <div class="row">
+            <div class="col-md-12 mx-auto">
+                <h3>Buscador:</h3>
+                <input type="text" id="search" onkeyup="filter();" class="form-control">
+            </div>
+        </div>
+
+        <div id="productsSell" class="col-md-12 table-fluid"></div>
+    </div>
+    </div>
+
+    <br>
+
+    <footer class="navbar-dark bg-dark pt-4 pl-4 pr-4">
+        <div class="row">
+            <div class="col-xs-12 col-md-3">
+                <address>
+                     <strong class="white">HyperSoftCode.</strong><br> 
+                     Dirección imaginaria #666<br> Ciudad de México. 69666<br> 
+                     Tel: <a href="">(+52) 00-0000-0000</a>
+                </address>
+            </div>
+    
+            <div class="col-xs-12 col-md-3">
+                <ul class="navbar-nav flex-column">
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Condiciones de uso</a>
+                  </li>
+                </ul>
+            </div>
+    
+            <div class="col-xs-12 col-md-3">
+                <ul class="navbar-nav flex-column">
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Polìtica privacidad</a>
+                  </li>
+                </ul>
+            </div>
+    
+            <div class="col-xs-12 col-md-3">
+                <blockquote class="blockquote text-right">
+                    <p class="mb-0 white">
+                        No es sobre las ideas. Sino hacer que éstas se vuelvan realidad.
+                    </p>
+                    <footer class="blockquote-footer">
+                        Scott Belsky
+                    </footer>
+                </blockquote>
+            </div>
+    
+        </div>
+        <div class="row white pd-4">
+            <div class="col text-center mb-3">
+                <small class="">Todos los derechos reservados HyperSoftCode &copy; 2019</small>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+
+        var sellProducts = [];
+
+        $.ajax({
+            url: "/getUser",
+            type: "POST",
+            success: function (response) {
+                if (response.level != "2") {
+                    window.location.href = "../index.html";
+                }
+                if (!response.valid == true) {
+                    window.location.href = "../index.html";
+                }
+            }
+        });
+
+        $.ajax({
+            url: "/getSellProducts",
+            type: "POST",
+            success: function (response) {
+                $("#productsSell").html(response);
+            }
+        });
+
+        $.ajax({
+            url: "/getUnitySell",
+            type: "POST",
+            success: function (response) {
+                $("#unity").append(response);
+            }
+        });
+
+        $.ajax({
+            url: "/getTypeSell",
+            type: "POST",
+            success: function (response) {
+                $("#type").append(response);
+            }
+        });
+
+        function addProductToSell(nom_pro, pre_com, can_ivt, id, unm, tpo, des, total) {
+            var i = 0;
+            sellProducts.forEach(element => {
+                if (element.nom_pro == nom_pro) {
+                    i++;
+                }
+            });
+
+            if (i == 0) {
+                sellProducts.push({
+                    unm: unm,
+                    tpo: tpo,
+                    des: des,
+                    dis: can_ivt,
+                    nom_pro: nom_pro,
+                    pre_com: pre_com,
+                    can_ivt: can_ivt,
+                    can_ivtTotal: total,
+                    id: id,
+                    total: pre_com
+                });
+                var html = "<tr id='" + id + "Sell'>";
+                html += "<td>" + nom_pro + "</td><td>" + pre_com + "</td><td><input type='number' class='form-control' min=0 onclick=\"modifyQuantity('" + nom_pro + "',this," + total + ",event);\" onkeyup=\"modifyQuantity('" + nom_pro + "',this," + total + ",event);\" value='" + can_ivt + "'></td><td>" + total + "</td><td><div id='" + nom_pro + "'>" + (pre_com) + "</div></td><td><input type='button' value='Remover' class='btn btn-warning' onclick=\"removeProduct('" + nom_pro + "');\"></td>";
+                html += "</tr>"
+                $("#sell").append(html);
+                $("#" + id).remove();
+            }
+            console.log(sellProducts);
+            document.getElementById(nom_pro).innerText = pre_com;
+            getTotal();
+        }
+
+        function getTotal() {
+            var total = 0;
+            sellProducts.forEach(element => {
+                total += element.total;
+            });
+            document.getElementById("total").innerText = total;
+        }
+
+        function modifyQuantity(nom_pro, field, total, event) {
+            var i = 0;
+            var price = 0;
+            var aux = 0;
+            var q = field.value;
+            if (q > total) {
+                q = total;
+            }
+            if (q[0] == 0) {
+                q[0] = "";
+            }
+            if (q == "") {
+                q = 0;
+            }
+            sellProducts.forEach(element => {
+                if (element.nom_pro == nom_pro) {
+                    price = q * element.pre_com;
+                    document.getElementById(nom_pro).innerText = price;
+                    aux = i;
+                }
+                else {
+                    i++;
+                }
+            });
+            sellProducts[aux].total = price;
+            sellProducts[aux].can_ivt = q;
+            field.value = q;
+            getTotal();
+        }
+        function removeProduct(nom_pro) {
+            var i = 0;
+            var aux = 0;
+            var price = 0;
+            sellProducts.forEach(element => {
+                if (element.nom_pro == nom_pro) {
+                    aux = i;
+                }
+                else {
+                    i++;
+                }
+            });
+
+            var html = `<tr id='${sellProducts[aux].nom_pro.replace(/\s/g, "")}Table'>
+                        <td>${sellProducts[aux].nom_pro}</td>
+                        <td>${sellProducts[aux].pre_com}</td>
+                        <td>${sellProducts[aux].can_ivtTotal}</td>
+                        <td>${sellProducts[aux].des}</td>
+                        <td>${sellProducts[aux].unm}</td>
+                        <td>${sellProducts[aux].tpo}</td>
+                        <td><input type="button" value="Agregar" class="btn btn-success"
+                        onclick="addProductToSell('${sellProducts[aux].nom_pro}',${sellProducts[aux].pre_com},
+                        1,'${sellProducts[aux].nom_pro.replace(/\s/g, "")}Table','${sellProducts[aux].unm}',
+                        '${sellProducts[aux].tpo}','${sellProducts[aux].des}',${sellProducts[aux].can_ivtTotal})"></td>
+                        </tr>`;
+            $("#allProducts").append(html);
+            $("#" + sellProducts[aux].id + "Sell").remove();
+            sellProducts.splice(aux, 1);
+            getTotal();
+        }
+        function registerSell() {
+            $.ajax({
+                url: "/registerSell",
+                type: "POST",
+                data: { data: sellProducts },
+                success: function (response) {
+                    if (response == "") {
+                        alert("Venta realizada");
+                        sellProducts.splice(0, sellProducts.length);
+                        $.ajax({
+                            url: "/getSellProducts",
+                            type: "POST",
+                            success: function (response) {
+                                $("#productsSell").html(response);
+                            }
+                        });
+                        $("#sell").text("");
+                        $("#total").text("");
+                    }
+                    else {
+                        alert(response);
+                    }
+                }
+            });
+        }
+        function filter() {
+            var unity = $("#unity").val();
+            var type = $("#type").val();
+            var like = $("#search").val();
+
+            if (type == "Cualquier categoría") {
+                type = "";
+            }
+            if (unity == "Cualquier unidad") {
+                unity = "";
+            }
+
+            $.ajax({
+                url: "/filterProductsSell",
+                type: "POST",
+                data: { unity: unity, type: type, like: like, p: sellProducts },
+                success: function (response) {
+                    $("#productsSell").html(response);
+                }
+            });
+
+        }
+    </script>
+</body>
+
+</html>

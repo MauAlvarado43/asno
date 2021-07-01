@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/estilos.css" rel="stylesheet" type="text/css">
+    <link href="favicon.png" rel="icon" type="image/png">
+    <link rel="stylesheet" type="text/css" href="css/chat.css">
+    <title>Chat global de ASNO</title>
+  </head>
+  <body>
+  				<header>
+	  	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		  <a class="navbar-brand" href="index.html"><img src="img/logo.png"></a>
+		  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample05" aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
+		    <span class="navbar-toggler-icon"></span>
+		  </button>
+
+		  <div class="collapse navbar-collapse" id="navbarsExample05">
+		    <ul class="navbar-nav mr-auto">
+		      <li class="nav-item active">
+		        <a class="nav-link" href="index.html">Inicio <span class="sr-only">(current)</span></a>
+		      </li>
+		      <li class="nav-item">
+		        <a class="nav-link" href="#">Enlance 1</a>
+		      </li>
+		      <li class="nav-item">
+		        <a class="nav-link" href="#">Enlace 2</a>
+		      </li>
+		      
+		    </ul>
+		    
+		  </div>
+		  <div class="navbar-nav my-2 my-md-0">
+	     	<a  class="btn btn-success mr-3 mb-3 d-inline-block" id="modal-279856" href="#modal-container-279856" role="button" class="btn" data-toggle="modal">Botón 1</a>
+			<a  class="btn btn-primary mb-3 d-inline-block" id="modal-857424" href="#modal-container-857424" role="button" class="btn" data-toggle="modal">Botón 2</a>
+		  </div>
+		</nav>
+	</header>
+
+<div class="container-fluid">
+	<br>
+
+	<div class="container">
+		<h3 class=" text-center">Chat Global</h3>
+		<div class="messaging">
+		      <div class="inbox_msg">
+		        <div class="inbox_people">
+		          <div class="headind_srch">
+		            <div class="recent_heading">
+		              <h4>Personas en línea</h4>
+		            </div>
+		            <div class="srch_bar">
+		              <div class="stylish-input-group">
+		                
+		                
+		                </span> </div>
+		            </div>
+		          </div>
+		        <div class="inbox_chat">
+		          <div class="chat_list active_chat" id="online">
+		          </div>
+				</div>
+				</div>
+		        <!--		Aquí inician los mensajes		-->
+		        <div class="mesgs">
+		          <div class="msg_history" id="msg_history">
+		              <div class="received_msg" id="received_msg">	
+						</div>
+		          
+				</div>
+				<div class="type_msg">
+		            <div class="input_msg_write">
+		              <input type="text" class="write_msg" placeholder="Escribe tu mensaje amiko" id="msg" onkeyup="if(event.keyCode==13){sendMSG();}"/>
+		              <button class="msg_send_btn" type="button" onclick="sendMSG();"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+		            
+				  </div>
+				  </div>	
+			  </div>
+			  
+	      	
+	</div>
+		</div>
+		
+
+</div>
+<footer class="navbar-dark bg-dark pt-4 pl-4 pr-4">
+	<div class="row">
+		<div class="col-xs-12 col-md-3">
+			<address>
+				 <strong class="white">HyperSoftCode.</strong><br> 
+				 Dirección imaginaria #666<br> Ciudad de México. 69666<br> 
+				 Tel: <a href="">(+52) 00-0000-0000</a>
+			</address>
+		</div>
+
+		<div class="col-xs-12 col-md-3">
+			<ul class="navbar-nav flex-column">
+			  <li class="nav-item">
+			    <a class="nav-link" href="#">Condiciones de uso</a>
+			  </li>
+			</ul>
+		</div>
+
+		<div class="col-xs-12 col-md-3">
+			<ul class="navbar-nav flex-column">
+			  <li class="nav-item">
+			    <a class="nav-link" href="#">Polìtica privacidad</a>
+			  </li>
+			</ul>
+		</div>
+
+		<div class="col-xs-12 col-md-3">
+			<blockquote class="blockquote text-right">
+				<p class="mb-0 white">
+					Dormir es para gente que duerme.
+				</p>
+				<footer class="blockquote-footer">
+					Damián Vega <cite>Sin título</cite>
+				</footer>
+			</blockquote>
+		</div>
+
+	</div>
+	<div class="row white pd-4">
+		<div class="col text-center mb-3">
+			<small class="">Todos los derechos reservados HyperSoftCode &copy; 2019</small>
+		</div>
+	</div>
+</footer>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+	<script src="js/scripts.js"></script>
+	<script src="js/socket.io.js"></script>
+	<script>
+		var name = "Usuario desconocido";
+		var i = 0;
+
+		$.ajax({
+			url:"/getUser",
+			type:"POST",
+			success:function(response){     
+				if(response.user != null){
+					name = response.user;
+				}
+			}
+		});
+
+		var socket = io.connect('asno.ga',{transports: ['polling']});
+
+		var id = "";
+
+		socket.on('connect', () => {
+			id = socket.id;
+			socket.emit("loadUser",id,name);
+		});
+
+		socket.on('chatgg', function(user,msg,date){
+			var msg = "<div class='incoming_msg'><span class='time_date'>"+user+"</span>"
+							+"<div class='incoming_msg_img'><img src='img/chat/perfil.png' alt='sunil'></div>"
+								+"<div class='received_msg'>"
+									+"<div class='received_withd_msg'>"
+									+"<p>"+decodeURIComponent(msg)+"</p>"
+								+"<span class='time_date'>"+date+"</span></div>"
+							+"</div>"
+						+"</div>";
+
+			$("#received_msg").append(msg);
+										
+			var bottom = $("#msg_history").prop('scrollHeight');
+
+			$("#msg_history").scrollTop(bottom);
+		
+		});
+
+		socket.on('chatgUsers',function(online){
+
+			var html = "";
+
+			online.forEach(element => {
+				if(element["socketID"]==id){
+					
+				}
+				else{
+					html += "<div class='chat_list'>"
+						+"<div class='chat_people'>"
+							+"<div class='chat_img'> <img src='img/chat/perfil.png' alt='sunil'> </div>"
+							+"<div class='chat_ib'>"
+							+"<h5>"+element['name']+"</h5>"
+							+"</div>"
+						+"</div>"
+						+"</div>";
+				}
+			});
+			
+			$("#online").text("");
+			$("#online").html(html);
+
+		});
+
+		setInterval(function(){
+			i++;
+		},500);
+
+		function sendMSG(){
+			if($('#msg').val()==""){return false;}
+			if(i<2){return false;}
+			i = 0;
+			socket.emit('chatg',$('#msg').val(),name);
+			$("#msg").val("");
+		}
+
+	</script>
+  </body>
+</html>
